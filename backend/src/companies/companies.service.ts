@@ -11,6 +11,8 @@ import { Company } from './entities/company.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/products/entities/product.entity';
+import { Department } from 'src/seed/departament/entities/department.entity';
+import { Municipality } from 'src/seed/municipality/entities/municipality.entity';
 
 @Injectable()
 export class CompaniesService {
@@ -21,18 +23,40 @@ export class CompaniesService {
     private readonly companyRepository: Repository<Company>,
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(Department)
+    private readonly departmentRepository: Repository<Department>,
+    @InjectRepository(Municipality)
+    private readonly municipalityRepository: Repository<Municipality>,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
-    try {
-      const { products = [], ...companyData } = createCompanyDto;
+    const {
+      products = [],
+      departmentId,
+      municipalityId,
+      ...companyData
+    } = createCompanyDto;
 
-      const company = this.companyRepository.create({
-        ...companyData,
-        products: products.map((product) =>
-          this.productRepository.create(product),
-        ),
-      });
+    const department = await this.departmentRepository.findOneBy({
+      id: departmentId,
+    });
+    const municipality = await this.municipalityRepository.findOneBy({
+      id: municipalityId,
+    });
+
+    if (!department || !municipality || !departmentId || !municipalityId) {
+      throw new BadRequestException('Departamento o municipio inválido.');
+    }
+
+    const company = this.companyRepository.create({
+      ...companyData,
+      department,
+      municipality,
+      products: products.map((product) =>
+        this.productRepository.create(product),
+      ),
+    });
+    try {
       await this.companyRepository.save(company);
       return company;
     } catch (error) {
@@ -53,11 +77,29 @@ export class CompaniesService {
   }
 
   async update(id: string, updateCompanyDto: UpdateCompanyDto) {
-    const { products, ...companyFields } = updateCompanyDto;
+    const {
+      products = [],
+      departmentId,
+      municipalityId,
+      ...companyData
+    } = updateCompanyDto;
+
+    const department = await this.departmentRepository.findOneBy({
+      id: departmentId,
+    });
+    const municipality = await this.municipalityRepository.findOneBy({
+      id: municipalityId,
+    });
+
+    if (!department || !municipality) {
+      throw new BadRequestException('Departamento o municipio inválido.');
+    }
 
     const company = await this.companyRepository.preload({
       id: id,
-      ...companyFields,
+      ...companyData,
+      department: departmentId ? department : undefined,
+      municipality: municipalityId ? municipality : undefined,
     });
 
     if (!company)

@@ -5,6 +5,11 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
 import { CompaniesModule } from './companies/companies.module';
+import { SeedModule } from './seed/seed.module';
+
+import { MunicipalityModule } from './seed/municipality/municipality.module';
+import { DepartmentModule } from './seed/departament/department.module';
+
 
 @Module({
   imports: [
@@ -20,7 +25,10 @@ import { CompaniesModule } from './companies/companies.module';
       synchronize: true, // cambiar en producción para que no se este actualizando la db
     }),
     ProductsModule,
-    CompaniesModule
+    CompaniesModule,
+    SeedModule,
+    DepartmentModule,
+    MunicipalityModule
   ],
   controllers: [AppController],
   providers: [AppService],

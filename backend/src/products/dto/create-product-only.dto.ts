@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, IsPositive, IsString, IsUUID, MinLength } from 'class-validator';
 
-export class CreateProductDto {
+export class CreateProductOnlyDto {
   @IsString({ message: 'Debe de ser un nombre válido' })
   @MinLength(2, { message: 'El nombre debe ser mayor a 2 caracteres' })
   name: string;
@@ -12,8 +12,4 @@ export class CreateProductDto {
   @IsNumber({}, { message: 'Debe de ser un número válido' })
   @IsPositive({ message: 'El precio debe de ser mayor a 0' })
   price: number;
-
-  @IsNotEmpty({ message: 'El producto debe tener una compañia' }) 
-  @IsUUID(4, { message: 'El id de la compañia no es válido' })
-  companyId: string;
 }

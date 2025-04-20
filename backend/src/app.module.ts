@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { ProductsModule } from './products/products.module';
       autoLoadEntities: true,
       synchronize: true, // cambiar en producción para que no se este actualizando la db
     }),
-    ProductsModule
+    ProductsModule,
+    CompaniesModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -10,6 +10,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
+import { Company } from 'src/companies/entities/company.entity';
 
 @Injectable()
 export class ProductsService {
@@ -18,17 +19,23 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create({ companyId, ...productData }: CreateProductDto) {
     try {
-      const product = this.productRepository.create(createProductDto);
+      const product = this.productRepository.create(productData);
+      const company = await this.companyRepository.findOneBy({ id: companyId });
+
+      if (!company) {
+        throw new NotFoundException('Compañía no encontrada');
+      }
       await this.productRepository.save(product);
       return product;
     } catch (error) {
       this.handlerDBException(error);
     }
-    return 'This action adds a new product';
   }
 
   findAll() {
@@ -44,11 +51,13 @@ export class ProductsService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
+
+    const { companyId, ...productData } = updateProductDto;
     const product = await this.productRepository.preload({
       id: id,
-      ...updateProductDto,
+      ...productData,
     });
-
+    
     if (!product)
       throw new NotFoundException(`No existe el producto con id ${id}`);
 

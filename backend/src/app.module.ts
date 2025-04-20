@@ -9,6 +9,7 @@ import { SeedModule } from './seed/seed.module';
 
 import { MunicipalityModule } from './seed/municipality/municipality.module';
 import { DepartmentModule } from './seed/departament/department.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -28,7 +29,8 @@ import { DepartmentModule } from './seed/departament/department.module';
     CompaniesModule,
     SeedModule,
     DepartmentModule,
-    MunicipalityModule
+    MunicipalityModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -69,6 +69,13 @@ export class ProductsService {
     }
   }
 
+  async findByCompany(companyId: string) {
+    const products = await this.productRepository.find({
+      where: { company: { id: companyId } },
+    });
+    return products;
+  }
+
   async remove(id: string) {
     try {
       const product = await this.findOne(id);

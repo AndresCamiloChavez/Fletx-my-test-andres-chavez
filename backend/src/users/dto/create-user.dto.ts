@@ -1,10 +1,10 @@
 import {
   IsEmail,
+  IsNotEmpty,
   IsNumber,
   IsPositive,
   IsString,
-  Matches,
-  MaxLength,
+  IsUUID,
   MinLength,
 } from 'class-validator';
 
@@ -36,12 +36,9 @@ export class CreateUserDto {
   )
   email: string;
 
-  @IsString()
-  @MinLength(6)
-  @MaxLength(50)
-  @Matches(/(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message:
-      'La contraseña debe de tener un mínimo de 6 caracteres, al menos una letra mayúscula, una letra minúscula y un número o símbolo',
-  })
-  password: string;
+  @IsNotEmpty({ message: 'El producto debe tener una compañia' }) 
+  @IsUUID(4, { message: 'El id de la compañia no es válido' })
+  companyId: string;
+
+
 }

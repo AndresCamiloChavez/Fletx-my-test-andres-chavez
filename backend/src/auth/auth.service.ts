@@ -8,7 +8,7 @@ import { UserAuth } from './entities/auth.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto, LoginUserDto } from './dto';
+import {  LoginUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserAuthDto } from './dto/create-user-auth.dto';
@@ -47,12 +47,15 @@ export class AuthService {
     });
 
     if (!user) throw new UnauthorizedException('Credenciales incorrectas');
-
     if (!bcrypt.compareSync(password, user.password))
       throw new UnauthorizedException('Credenciales incorrectas');
-    
-    // delete user.password;
 
+    const { password: _, ...userData } = user;
+    
+    return { ...userData, token: this.getJwtToken({ id: user.id }) };
+  }
+
+  async checkAuthStatus(user: UserAuth) {
     return { ...user, token: this.getJwtToken({ id: user.id }) };
   }
 

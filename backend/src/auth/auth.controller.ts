@@ -1,10 +1,10 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto';
 import { CreateUserAuthDto } from './dto/create-user-auth.dto';
-import { GetUser } from './decorators/get-user.decorator';
 import { UserAuth } from './entities/auth.entity';
-import { AuthGuard } from '@nestjs/passport';
+import { Auth, GetUser } from './decorators';
+import { ValidRoles } from './interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -19,19 +19,12 @@ export class AuthController {
   loginUser(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
   }
-  @Get('private')
-  @UseGuards( AuthGuard() )
-  testingPrivateRoute(
+
+  @Get('check-status')
+  @Auth()
+  checkAuthStatus(
     @GetUser() user: UserAuth,
-    @GetUser('email') userEmail: string,
-  ) {
-
-    return {
-      ok: true,
-      message: 'Hola Mundo Private',
-      user,
-      
-    }
+  ){
+    return this.authService.checkAuthStatus(user);
   }
-
 }

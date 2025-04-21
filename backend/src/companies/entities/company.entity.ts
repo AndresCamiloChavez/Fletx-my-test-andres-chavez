@@ -1,6 +1,7 @@
 import { Product } from 'src/products/entities/product.entity';
 import { Department } from 'src/seed/departament/entities/department.entity';
 import { Municipality } from 'src/seed/municipality/entities/municipality.entity';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
@@ -34,6 +35,12 @@ export class Company {
     eager: true,
   })
   products: Product[];
+
+  @OneToMany(() => User, (user) => user.company, {
+    cascade: true,
+    eager: true,
+  })
+  users: User[];
 
   @ManyToOne(() => Department, (department) => department.companies, {
     eager: true,

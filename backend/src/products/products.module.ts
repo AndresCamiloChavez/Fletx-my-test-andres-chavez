@@ -4,6 +4,7 @@ import { ProductsController } from './products.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { CompaniesModule } from 'src/companies/companies.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [ProductsController],
@@ -11,6 +12,7 @@ import { CompaniesModule } from 'src/companies/companies.module';
   imports: [
     TypeOrmModule.forFeature([Product]),
     forwardRef(() => CompaniesModule),
+    AuthModule
   ],
   exports: [ProductsService, TypeOrmModule],
 })
